@@ -8,6 +8,7 @@ All workspaces linked below:
 | Workspace | Dir |
 |:-|:-|
 | Hello Bevy               | [link](./hello_bevy) |
+| Flappy Dragon            | [link](./flappy)     |
 | My Library               | [link](./my_library) |
 | Pig (dice game)          | [link](./pig)        |
 

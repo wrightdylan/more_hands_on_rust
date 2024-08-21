@@ -31,6 +31,9 @@ mod random_locking;
 #[cfg(feature = "locking")]
 pub use random_locking::*;
 
+mod bevy_framework;
+pub use bevy_framework::*;
+
 /// [`RandomNumberGenerator`] wraps the `rand` crate. The `rand` crate
 /// is re-exported for your convenience.
 pub mod rand {

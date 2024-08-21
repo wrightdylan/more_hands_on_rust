@@ -4,6 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [workspace]
-members = ["hello_bevy", "my_library" , "pig"]
+members = [ "flappy", "hello_bevy", "my_library" , "pig" ]
 
 [dependencies]
