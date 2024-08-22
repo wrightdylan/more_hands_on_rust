@@ -1,6 +1,6 @@
 [package]
 name = "my_library"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 
 [[bench]]
@@ -8,7 +8,7 @@ name = "random"
 harness = false
 
 [dependencies]
-bevy = "0.14.0"
+bevy = "0.14.1"
 rand = "0.8.5"
 rand_pcg = { version = "0.3.1", optional = true }
 rand_xorshift = { version = "0.3.0", optional = true }

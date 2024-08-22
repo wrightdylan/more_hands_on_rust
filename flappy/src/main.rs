@@ -1,7 +1,7 @@
-use bevy::{app::AppExit, prelude::*};
+use bevy::prelude::*;
 use my_library::*;
 
-#[derive(Clone, PartialEq, Eq, Debug, Hash, Default, States)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Hash, Default, States)]
 enum GamePhase {
   MainMenu,
   #[default]
@@ -16,6 +16,9 @@ struct Flappy {
 
 #[derive(Component)]
 struct Obstacle;
+
+#[derive(Component)]
+struct FlappyElement;
 
 #[derive(Resource)]
 struct Assets {
@@ -41,12 +44,11 @@ fn main() {
       GamePhase::Flapping,
       GamePhase::GameOver,
     ))
-    .add_systems(Startup, setup)
-    .add_systems(Update, gravity)
-    .add_systems(Update, flap)
-    .add_systems(Update, clamp)
-    .add_systems(Update, move_walls)
-    .add_systems(Update, hit_wall)
+    .add_systems(OnEnter(GamePhase::Flapping), setup)
+    .add_systems(Update, (
+      gravity, flap, clamp, move_walls, hit_wall
+    ).run_if(in_state(GamePhase::Flapping)))
+    .add_systems(OnExit(GamePhase::Flapping), cleanup::<FlappyElement>)
     .run();
 }
 
@@ -60,14 +62,17 @@ fn setup(
     wall: asset_server.load("wall.png"),
   };
 
-  commands.spawn(Camera2dBundle::default());
+  commands
+    .spawn(Camera2dBundle::default())
+    .insert(FlappyElement);
   commands
     .spawn(SpriteBundle {
       texture: assets.dragon.clone(),
       transform: Transform::from_xyz(-490.0, 0.0, 1.0),
       ..default()
     })
-    .insert(Flappy { gravity: 0.0 });
+    .insert(Flappy { gravity: 0.0 })
+    .insert(FlappyElement);
 
   build_wall(&mut commands, assets.wall.clone(), rng.range(-5..5));
   commands.insert_resource(assets);
@@ -108,13 +113,13 @@ fn flap(keyboard: Res<ButtonInput<KeyCode>>, mut query: Query<&mut Flappy>) {
 
 fn clamp(
   mut query: Query<&mut Transform, With<Flappy>>,
-  mut exit: EventWriter<AppExit>,
+  mut state: ResMut<NextState<GamePhase>>,
 ) {
   if let Ok(mut transform) = query.get_single_mut() {
     if transform.translation.y > 384.0 {
       transform.translation.y = 384.0;
     } else if transform.translation.y < -384.0 {
-      exit.send(AppExit::Success);
+      state.set(GamePhase::GameOver);
     }
   }
 }
@@ -144,13 +149,13 @@ fn move_walls(
 fn hit_wall(
   player: Query<&Transform, With<Flappy>>,
   walls: Query<&Transform, With<Obstacle>>,
-  mut exit: EventWriter<AppExit>,
+  mut state: ResMut<NextState<GamePhase>>,
 ) {
   if let Ok(player) = player.get_single() {
     for wall in walls.iter() {
       let distance = player.translation.distance(wall.translation);
       if distance < 32.0 {
-        exit.send(AppExit::Success);
+        state.set(GamePhase::GameOver);
       }
     }
   }
