@@ -1,9 +1,9 @@
 [package]
 name = "pig"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 
 [dependencies]
-bevy = "0.14.0"
-bevy_egui = "0.28.0"
+bevy = "0.14.1"
+bevy_egui = "0.29.0"
 my_library = { package = "my_library", path = "../my_library", features = [ "locking" ] }

@@ -13,3 +13,4 @@ All workspaces linked below:
 | Pig (dice game)          | [link](./pig)        |
 
 ## Notes
+1. Currently experiencing an issue where MenuAssets are not being loaded on startup, but only load at game over.
